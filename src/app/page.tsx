@@ -1,15 +1,31 @@
-import Image from "next/image";
-import HomePage from "./pages/page";
+"use client";
+
+import { useSession, signIn, signOut } from "next-auth/react";
 
 export default function Home() {
+  const { data: session } = useSession();
   return (
-    <div >
-      <main >
-        <HomePage></HomePage>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        
-      </footer>
+    <div className="p-6 text-center">
+      {session ? (
+        <>
+          <h1 className="text-xl mb-4">Hello, {session.user?.name}</h1>
+          <p>{session.user?.id}</p>
+          <p>{session.user?.email}</p>
+          <button
+            onClick={() => signOut()}
+            className="bg-red-500 text-white px-4 py-2 rounded"
+          >
+            Sign Out
+          </button>
+        </>
+      ) : (
+        <button
+          onClick={() => signIn("keycloak")}
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          Sign In with Keycloak
+        </button>
+      )}
     </div>
   );
 }

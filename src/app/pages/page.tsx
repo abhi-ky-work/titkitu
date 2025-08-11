@@ -7,7 +7,7 @@ export default function HomePage(){
         <div className="title">
             Hi !! This Is My Portfolio.
             <div>
-               The Environment is : {process.env.ENVIRONMENT}
+               The Environment is : {process.env.NODE_ENV}
             </div>
         </div>
         </>
