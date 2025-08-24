@@ -26,13 +26,13 @@ const handler = NextAuth({
       return session;
     },
     async redirect({ url, baseUrl }) {
-      // ✅ Always allow relative redirects
+      // Always allow relative redirects
       if (url.startsWith("/")) return `${baseUrl}${url}`
 
-      // ✅ Allow only same-origin redirects for security
+      // Allow only same-origin redirects for security
       if (new URL(url).origin === baseUrl) return url
 
-      // ✅ Default: redirect to home
+      // Default: redirect to home
       return baseUrl
     },
   },

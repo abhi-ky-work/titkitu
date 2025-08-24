@@ -3,8 +3,8 @@
 import { useSession, signIn, signOut } from "next-auth/react";
 
 export default function Home() {
-
-  // console.log("Session Data:", session , session?.user?.name);
+  const { data: session } = useSession();
+  console.log("Session Data Home:", session , session?.user);
   return (
     <div className="p-6 text-center">
        <button

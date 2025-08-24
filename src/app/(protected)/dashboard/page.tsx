@@ -1,22 +1,31 @@
 'use client'
 // import { getSession } from "next-auth/react"
 
-import {useSession,  signOut } from "next-auth/react";
+import {useSession,  signOut, signIn } from "next-auth/react";
 import { redirect } from "next/navigation";
 
 
-export default async function HomePage(context: any) {
-    const { data: session } = useSession();
+export default  function HomePage() {
+    const { data: session , status} =  useSession();
 
-    if (!session) {
-        redirect("/");
+    if (status === "loading") {
+        return <div>Loading...</div>;
     }
+    if (!session) {
+        console.log("No session found, redirecting to home.");
+        // <a href="/api/auth/signin">Sign in</a>
+        redirect("/api/auth/signin");
+    }
+
+    console.log("Session Data in Dashboard:", session, status , session?.user?.name);
+
+
     return (
         <>
         <div className="title">
-            Hi !! This Is My Portfolio.
+            Welcome to Dashboard
             <div>
-               The Environment is : 
+               Hi {session?.user?.name }
             </div>
             <button
             onClick={() => signOut({ callbackUrl: "/" })}
