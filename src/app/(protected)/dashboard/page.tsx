@@ -13,12 +13,8 @@ export default  function HomePage() {
     }
     if (!session) {
         console.log("No session found, redirecting to home.");
-        // <a href="/api/auth/signin">Sign in</a>
         redirect("/api/auth/signin");
     }
-
-    console.log("Session Data in Dashboard:", session, status , session?.user?.name);
-
 
     return (
         <>
