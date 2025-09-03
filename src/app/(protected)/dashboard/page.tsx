@@ -19,16 +19,21 @@ export default  function HomePage() {
     return (
         <>
         <div className="title">
-            Welcome to Dashboard
+            Welcome to Dashboard {session?.user?.name }
             <div>
-               Hi {session?.user?.name }
+               Let's Get You Started !!
             </div>
-            <button
-            onClick={() => signOut({ callbackUrl: "/" })}
-            className="bg-red-500 text-white px-4 py-2 rounded"
-            >
-            Sign Out
-            </button>
+            We need few more details to set up your account.
+            
+
+            <div>
+                <button
+                onClick={() => signOut({ callbackUrl: "/" })}
+                className="bg-red-500 text-white px-4 py-2 rounded"
+                >
+                Sign Out
+                </button>
+            </div>
         </div>
         </>
     )
