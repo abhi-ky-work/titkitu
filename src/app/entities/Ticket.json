@@ -1,0 +1,54 @@
+{
+  "name": "Ticket",
+  "type": "object",
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "description": "Reference to event"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "general",
+        "vip",
+        "premium",
+        "resale"
+      ],
+      "description": "Ticket type"
+    },
+    "price": {
+      "type": "number",
+      "description": "Ticket price"
+    },
+    "quantity": {
+      "type": "number",
+      "description": "Quantity selected"
+    },
+    "benefits": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Ticket benefits"
+    },
+    "is_resale": {
+      "type": "boolean",
+      "default": false,
+      "description": "Resale ticket flag"
+    },
+    "resale_discount": {
+      "type": "number",
+      "description": "Resale discount percentage"
+    },
+    "surge_price": {
+      "type": "number",
+      "description": "Surge pricing amount"
+    }
+  },
+  "required": [
+    "event_id",
+    "type",
+    "price",
+    "quantity"
+  ]
+}
