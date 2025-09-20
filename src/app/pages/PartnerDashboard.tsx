@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Event from "../entities/Event.json";
 import { Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
+import { createPageUrl } from "@/app/utils/utils-url";
 import PartnerLayout from "../components/partner/PartnerLayout";
 import PartnerEventCard from "../components/partner/EventCard";
 import { Button } from "../components/ui/button";
