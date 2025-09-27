@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import SessionProvider from "./components/sessionProvider";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 
 
@@ -20,7 +22,9 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body>
+        <Header/>
         <SessionProvider session={session}>{children}</SessionProvider>
+        <Footer/>
       </body>
     </html>
   );
