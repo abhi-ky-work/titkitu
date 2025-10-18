@@ -1,4 +1,6 @@
 'use client'
+import EventCard from "@/app/components/EventCard";
+import { browseEventsMocks } from "@/lib/mocks";
 // import { getSession } from "next-auth/react"
 
 import {useSession,  signOut, signIn } from "next-auth/react";
@@ -17,24 +19,15 @@ export default  function HomePage() {
     }
 
     return (
-        <>
-        <div className="title">
-            Welcome to Dashboard {session?.user?.name }
-            <div>
-               Let's Get You Started !!
+        
+        <main className="relative ">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {
+                    browseEventsMocks.map((event) =>{
+                        return <EventCard key={event.id} event={event}></EventCard>
+                    })
+                }
             </div>
-            We need few more details to set up your account.
-            
-
-            <div>
-                <button
-                onClick={() => signOut({ callbackUrl: "/" })}
-                className="bg-red-500 text-white px-4 py-2 rounded"
-                >
-                Sign Out
-                </button>
-            </div>
-        </div>
-        </>
+        </main>
     )
 }

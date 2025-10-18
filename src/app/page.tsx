@@ -18,28 +18,14 @@
 // }
 
 import React from "react";
-// import Header from "../components/Header";
-// import VideoHero from "../components/VideoHero";
 import PartnersSection from "./components/PartnersSection";
-import Footer from "./components/Footer";
 import LandingPageMainSection from "./components/LandingPageMainSection";
-// import PopularEventsCarousel from "../components/PopularEventsCarousel";
-// import BusinessOnboarding from "../components/BusinessOnboarding";
 
 export default function Dashboard() {
   return (
     <div className="min-h-screen">
-      {/* <Header /> */}
       <main>
-        {/* <VideoHero /> */}
         <LandingPageMainSection />
-        {/* <PartnersSection /> */}
-
-        {/* <PopularEventsCarousel /> */}
-        {/* <BusinessOnboarding /> */}
-        
-        {/* Footer */}
-        {/* <Footer /> */}
       </main>
     </div>
   );
