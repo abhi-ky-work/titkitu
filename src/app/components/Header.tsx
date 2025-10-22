@@ -1,7 +1,7 @@
 'use client'
 import { Button } from "@/components/ui/button";
-import { LogIn, Search, Ticket } from "lucide-react";
-import { signIn } from "next-auth/react";
+import { LogIn, LogOut, Search, Ticket } from "lucide-react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 
 export default function Header() {
@@ -9,6 +9,14 @@ export default function Header() {
 
     }
 
+    const { data: session , status} =  useSession();
+    
+    if (status === "loading") {
+        return <div>Loading...</div>;
+    }
+    const signOutHandler = () =>{
+        signOut({ callbackUrl: "/" })
+    }
   
     return (
     <header className="bg-white shadow sticky top-0 left-0 right-0 z-50 w-full" >
@@ -27,15 +35,21 @@ export default function Header() {
                 </form>
             </div>
             <div className="w-1/5 flex items-center justify-between ">
-
                 <Button variant="ghost" onClick={()=> redirect('/')} className="m-4 hover:text-purple-600 hover:bg-purple-50">
                     Browse Events
                 </Button>
-
+                {session ? 
+                <>
+                <Button variant="outline" onClick={ signOutHandler} className="m-4 border-purple-200 text-purple-600 hover:bg-purple-50"  >
+                    SingOut
+                    <LogOut  />
+                </Button>
+                </> 
+                : 
                 <Button variant="outline" onClick={()=> signIn("keycloak",{ callbackUrl: "/dashboard" })} className="m-4 border-purple-200 text-purple-600 hover:bg-purple-50"  >
                     <LogIn  />
                     SignIn
-                </Button>
+                </Button>}
             </div>
             
         </div>
