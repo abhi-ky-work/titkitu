@@ -8,16 +8,13 @@ export default function Header() {
     const searchSubmitHandler = () =>{
 
     }
-
     const { data: session , status} =  useSession();
-    
     if (status === "loading") {
         return <div>Loading...</div>;
     }
     const signOutHandler = () =>{
         signOut({ callbackUrl: "/" })
     }
-  
     return (
     <header className="bg-white shadow sticky top-0 left-0 right-0 z-50 w-full" >
         <div className="w-10/12 flex items-center justify-between ml-auto mr-auto ">
@@ -35,7 +32,7 @@ export default function Header() {
                 </form>
             </div>
             <div className="w-1/5 flex items-center justify-between ">
-                <Button variant="ghost" onClick={()=> redirect('/')} className="m-4 hover:text-purple-600 hover:bg-purple-50">
+                <Button variant="ghost" onClick={ () => redirect('/browseEvents')} className="m-4 hover:text-purple-600 hover:bg-purple-50">
                     Browse Events
                 </Button>
                 {session ? 

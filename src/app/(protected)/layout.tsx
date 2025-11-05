@@ -1,19 +1,21 @@
 import SessionProvider from "../components/sessionProvider";
 
 
-
+type LayoutProps = {
+  children?: React.ReactNode,
+  session?: any
+};
 
 export default function ProtectedRootLayout({
   children,
-  session
-}: Readonly<{
+  // session,
+}: {
   children: React.ReactNode;
-  session?: any;
-}>) {
+  // session?: any;
+}) {
   return (
     <div>
-      <SessionProvider session={session}>{children}</SessionProvider>
+      <SessionProvider >{children}</SessionProvider>
     </div>
-    
-);
+  );
 }

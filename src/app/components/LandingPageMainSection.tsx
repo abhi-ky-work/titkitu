@@ -2,6 +2,7 @@
 import { Button } from '@/components/ui/button'
 import bgImg from '../../../public/tikitu-stage-dance.jpeg'
 import { ArrowRight } from 'lucide-react'
+import { redirect } from 'next/navigation'
 export default function LandingPageMainSection(){
     return (
         <section className="relative h-screen flex items-center justify-center  overflow-hidden ">
@@ -28,7 +29,10 @@ export default function LandingPageMainSection(){
                 <p className='text-white text-lg mb-8 md:text-2xl mt-4 max-w-2xl'
                 >Premium event experiences without any hassle. Discover, book, and enjoy the best events in your city.</p>
 
-                <Button variant="outline" className='bg-white text-lg text-purple-900 hover:bg-pink-100'>
+                <Button variant="outline" 
+                className='bg-white text-lg text-purple-900 hover:bg-pink-100'
+                onClick={ () => redirect('/browseEvents')}
+                >
                     Explore Events  
                     <ArrowRight className='ml-2' />
                 </Button>

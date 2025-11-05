@@ -13,7 +13,7 @@ export default  function HomePage() {
     }
     if (!session) {
         console.log("No session found, redirecting to home.");
-        redirect("/api/auth/signin");
+        redirect("/");
     }
 
     return (
