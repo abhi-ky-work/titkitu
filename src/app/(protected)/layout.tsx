@@ -1,6 +1,3 @@
-import SessionProvider from "../components/sessionProvider";
-
-
 type LayoutProps = {
   children?: React.ReactNode,
   session?: any
@@ -8,14 +5,12 @@ type LayoutProps = {
 
 export default function ProtectedRootLayout({
   children,
-  // session,
 }: {
   children: React.ReactNode;
-  // session?: any;
 }) {
   return (
     <div>
-      <SessionProvider >{children}</SessionProvider>
+      {children}
     </div>
   );
 }
