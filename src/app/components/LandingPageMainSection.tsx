@@ -1,9 +1,13 @@
+'use client'
 
 import { Button } from '@/components/ui/button'
 import bgImg from '../../../public/tikitu-stage-dance.jpeg'
 import { ArrowRight } from 'lucide-react'
-import { redirect } from 'next/navigation'
+import { useRouter } from 'next/navigation'
+
 export default function LandingPageMainSection(){
+    const router = useRouter();
+    
     return (
         <section className="relative h-screen flex items-center justify-center  overflow-hidden ">
             <div  className="absolute inset-0 ">
@@ -31,7 +35,7 @@ export default function LandingPageMainSection(){
 
                 <Button variant="outline" 
                 className='bg-white text-lg text-purple-900 hover:bg-pink-100'
-                onClick={ () => redirect('/browseEvents')}
+                onClick={ () => router.push('/browseEvents')}
                 >
                     Explore Events  
                     <ArrowRight className='ml-2' />

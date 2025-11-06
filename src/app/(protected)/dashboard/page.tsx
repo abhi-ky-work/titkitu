@@ -6,20 +6,20 @@ import { redirect } from "next/navigation";
 
 
 export default  function HomePage() {
-    const { data: session , status} =  useSession();
+    // const { data: session , status} =  useSession();
 
-    if (status === "loading") {
-        return <div>Loading...</div>;
-    }
-    if (!session) {
-        console.log("No session found, redirecting to home.");
-        redirect("/");
-    }
+    // if (status === "loading") {
+    //     return <div>Loading...</div>;
+    // }
+    // if (!session) {
+    //     console.log("No session found, redirecting to home.");
+    //     redirect("/");
+    // }
 
     return (
         <>
         <div className="title">
-            Welcome to Dashboard {session?.user?.name }
+            Welcome to Dashboard 
             <div>
                Let's Get You Started !!
             </div>
@@ -27,12 +27,7 @@ export default  function HomePage() {
             
 
             <div>
-                <button
-                onClick={() => signOut({ callbackUrl: "/" })}
-                className="bg-red-500 text-white px-4 py-2 rounded"
-                >
-                Sign Out
-                </button>
+               
             </div>
         </div>
         </>

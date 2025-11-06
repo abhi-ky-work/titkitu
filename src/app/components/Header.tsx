@@ -1,19 +1,35 @@
 'use client'
 import { Button } from "@/components/ui/button";
 import { LogIn, LogOut, Search, Ticket } from "lucide-react";
-import { signIn, signOut, useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { getCurrentUser, signOut } from "@/lib/cognitoActions";
 
 export default function Header() {
-    const searchSubmitHandler = () =>{
+    const router = useRouter();
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+    const [checkingAuth, setCheckingAuth] = useState<boolean>(true);
 
+    useEffect(() => {
+        let mounted = true;
+        (async () => {
+            try {
+                const user = await getCurrentUser();
+                if (mounted) setIsAuthenticated(!!user);
+            } finally {
+                if (mounted) setCheckingAuth(false);
+            }
+        })();
+        return () => { mounted = false };
+    }, []);
+
+    const searchSubmitHandler = () =>{
     }
-    const { data: session , status} =  useSession();
-    if (status === "loading") {
-        return <div>Loading...</div>;
-    }
-    const signOutHandler = () =>{
-        signOut({ callbackUrl: "/" })
+
+    const signOutHandler = async () =>{
+        await signOut();
+        setIsAuthenticated(false);
+        router.push('/');
     }
     return (
     <header className="bg-white shadow sticky top-0 left-0 right-0 z-50 w-full" >
@@ -32,21 +48,24 @@ export default function Header() {
                 </form>
             </div>
             <div className="w-1/5 flex items-center justify-between ">
-                <Button variant="ghost" onClick={ () => redirect('/browseEvents')} className="m-4 hover:text-purple-600 hover:bg-purple-50">
-                    Browse Events
-                </Button>
-                {session ? 
-                <>
-                <Button variant="outline" onClick={ signOutHandler} className="m-4 border-purple-200 text-purple-600 hover:bg-purple-50"  >
-                    SingOut
-                    <LogOut  />
-                </Button>
-                </> 
-                : 
-                <Button variant="outline" onClick={()=> signIn("keycloak",{ callbackUrl: "/dashboard" })} className="m-4 border-purple-200 text-purple-600 hover:bg-purple-50"  >
-                    <LogIn  />
-                    SignIn
-                </Button>}
+                {!isAuthenticated && (
+                    <Button variant="ghost" onClick={ () => router.push('/partnerLogin')} className="m-4 hover:text-purple-600 hover:bg-purple-50">
+                        Partner SignIn
+                    </Button>
+                )}
+                {checkingAuth ? null : (
+                    isAuthenticated ? (
+                        <Button variant="outline" onClick={ signOutHandler} className="m-4 border-purple-200 text-purple-600 hover:bg-purple-50"  >
+                            SingOut
+                            <LogOut  />
+                        </Button>
+                    ) : (
+                        <Button variant="outline" onClick={() => router.push('/partnerLogin')} className="m-4 border-purple-200 text-purple-600 hover:bg-purple-50"  >
+                            <LogIn  />
+                            SignIn
+                        </Button>
+                    )
+                )}
             </div>
             
         </div>
