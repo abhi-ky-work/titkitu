@@ -1,7 +1,3 @@
-type LayoutProps = {
-  children?: React.ReactNode,
-  session?: any
-};
 
 export default function ProtectedRootLayout({
   children,

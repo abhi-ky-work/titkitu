@@ -83,7 +83,7 @@ export async function authenticatedFetch(
 /**
  * Helper function for GET requests
  */
-export async function apiGet<T = any>(endpoint: string, options: RequestInit = {}): Promise<T> {
+export async function apiGet<T = any>(endpoint: string, options: RequestInit = {}): Promise<T | null> {
   const response = await authenticatedFetch(endpoint, {
     ...options,
     method: 'GET',
@@ -104,7 +104,7 @@ export async function apiPost<T = any>(
   endpoint: string,
   data?: any,
   options: RequestInit = {}
-): Promise<T> {
+): Promise<T | null> {
   const response = await authenticatedFetch(endpoint, {
     ...options,
     method: 'POST',
@@ -128,7 +128,7 @@ export async function apiPut<T = any>(
   endpoint: string,
   data?: any,
   options: RequestInit = {}
-): Promise<T> {
+): Promise<T | null> {
   const response = await authenticatedFetch(endpoint, {
     ...options,
     method: 'PUT',
@@ -151,7 +151,7 @@ export async function apiPatch<T = any>(
   endpoint: string,
   data?: any,
   options: RequestInit = {}
-): Promise<T> {
+): Promise<T | null> {
   const response = await authenticatedFetch(endpoint, {
     ...options,
     method: 'PATCH',
@@ -173,7 +173,7 @@ export async function apiPatch<T = any>(
 export async function apiDelete<T = any>(
   endpoint: string,
   options: RequestInit = {}
-): Promise<T> {
+): Promise<T | null> {
   const response = await authenticatedFetch(endpoint, {
     ...options,
     method: 'DELETE',

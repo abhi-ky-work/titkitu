@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 
 
 
-export function createPageUrl(pageName) {
+export function createPageUrl(pageName: string) {
   if (pageName.includes('?')) {
     const [page, query] = pageName.split('?');
     return `/${page}?${query}`;

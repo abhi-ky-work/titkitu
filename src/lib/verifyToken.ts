@@ -61,7 +61,7 @@ export async function verifyCognitoToken(
       throw new Error('Token has expired');
     }
 
-    return payload as VerifiedTokenPayload;
+    return payload as unknown as VerifiedTokenPayload;
   } catch (error: any) {
     if (error.code === 'ERR_JWT_EXPIRED') {
       throw new Error('Token has expired');

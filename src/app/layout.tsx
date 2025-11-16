@@ -11,10 +11,8 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
-  session,
 }: Readonly<{
   children: React.ReactNode;
-  session?: any;
 }>) {
   // const session = await auth;
   return (
