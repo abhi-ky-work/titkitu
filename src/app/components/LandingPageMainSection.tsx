@@ -1,7 +1,6 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import bgImg from '../../../public/tikitu-stage-dance.jpeg'
 import { ArrowRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
