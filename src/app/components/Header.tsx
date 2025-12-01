@@ -2,34 +2,21 @@
 import { Button } from "@/components/ui/button";
 import { LogIn, LogOut, Search, Ticket } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { getCurrentUser, signOut } from "@/lib/cognitoActions";
+import { signOut } from "@/lib/cognitoActions";
+import { useAuthStore } from "@/lib/authStore";
 
 export default function Header() {
     const router = useRouter();
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-    const [checkingAuth, setCheckingAuth] = useState<boolean>(true);
-
-    useEffect(() => {
-        let mounted = true;
-        (async () => {
-            try {
-                const user = await getCurrentUser();
-                console.log('user in header' , user);
-                if (mounted) setIsAuthenticated(!!user);
-            } finally {
-                if (mounted) setCheckingAuth(false);
-            }
-        })();
-        return () => { mounted = false };
-    }, []);
+    const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
+    const initialized = useAuthStore((state: any) => state.initialized);
+    const clearAuth = useAuthStore((state: any) => state.clearAuth);
 
     const searchSubmitHandler = () =>{
     }
 
     const signOutHandler = async () =>{
         await signOut();
-        setIsAuthenticated(false);
+        clearAuth();
         router.push('/');
     }
     return (
@@ -49,12 +36,12 @@ export default function Header() {
                 </form>
             </div>
             <div className="w-1/5 flex items-center justify-between ">
-                {!isAuthenticated && (
+                {!isAuthenticated && initialized && (
                     <Button variant="ghost" onClick={ () => router.push('/partnerLogin')} className="m-4 hover:text-purple-600 hover:bg-purple-50">
                         Partner SignIn
                     </Button>
                 )}
-                {checkingAuth ? null : (
+                {!initialized ? null : (
                     isAuthenticated ? (
                         <Button variant="outline" onClick={ signOutHandler} className="m-4 border-purple-200 text-purple-600 hover:bg-purple-50"  >
                             SingOut

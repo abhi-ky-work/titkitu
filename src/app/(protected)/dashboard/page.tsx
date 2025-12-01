@@ -10,6 +10,7 @@ import {
     Ticket,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
 
 const navigationItems = [
     {
@@ -56,6 +57,9 @@ export default function DashboardPage() {
     const handleNavigation = (href: string) => {
         router.push(href);
     };
+    useEffect(()=>{
+        
+    }, [])
 
     return (
         <div className="min-h-screen bg-slate-50">

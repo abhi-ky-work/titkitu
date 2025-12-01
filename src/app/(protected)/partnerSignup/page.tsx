@@ -6,9 +6,11 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { confirmSignUp, resendSignUpCode, signUp, getCurrentUser } from '@/lib/cognitoActions'
 import { useRouter } from 'next/navigation'
+import { useAuthStore } from '@/lib/authStore'
 
 export default function PartnerSignUp() {
   const router = useRouter();
+  const setUser = useAuthStore((state) => state.setUser)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -52,6 +54,8 @@ export default function PartnerSignUp() {
         setNeedsConfirmation(true)
         setMessage('Verification code sent to your email')
       } else {
+        // User is automatically signed in - update global auth store
+        setUser({ username: email })
         router.push('/dashboard')
       }
     } catch (err: any) {
