@@ -15,6 +15,7 @@ export default function Header() {
         (async () => {
             try {
                 const user = await getCurrentUser();
+                console.log('user in header' , user);
                 if (mounted) setIsAuthenticated(!!user);
             } finally {
                 if (mounted) setCheckingAuth(false);
