@@ -3,6 +3,7 @@ import "./globals.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ConfigureAmplifyClientside from "./amplify-cognito-config";
+import AuthInitializer from "./AuthInitializer";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -18,10 +19,11 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ConfigureAmplifyClientside/>
-          <Header/>
-          {children}
-          <Footer/>
+        <ConfigureAmplifyClientside />
+        <AuthInitializer />
+        <Header />
+        {children}
+        <Footer />
       </body>
     </html>
   );

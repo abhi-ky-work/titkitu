@@ -6,9 +6,11 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { signIn, getCurrentUser } from "@/lib/cognitoActions";
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/lib/authStore";
 
 export default function PartnerLoginPage() {
   const router = useRouter();
+  const setUser = useAuthStore((state) => state.setUser);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -41,6 +43,8 @@ export default function PartnerLoginPage() {
       const result = await signIn({ email, password });
       console.log("result", result);
       if (result.isSignedIn) {
+        // Update global auth store so Header and other components react immediately
+        setUser({ username: email });
         router.push("/dashboard");
       } else {
         setError("Additional authentication step required.");
