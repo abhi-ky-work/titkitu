@@ -73,7 +73,7 @@ export async function authenticatedFetch(
   if (options.body && !headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json');
   }
-
+  console.log("url options ", url, options);
   return fetch(url, {
     ...options,
     headers,
