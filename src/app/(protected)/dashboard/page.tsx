@@ -8,6 +8,7 @@ import {
     Bell,
     CalendarCheck,
     Ticket,
+    User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
@@ -17,6 +18,11 @@ const navigationItems = [
         label: "Dashboard",
         href: "/dashboard",
         icon: LayoutDashboard,
+    },
+    {
+        label: "Accounts",
+        href: "/dashboard/account",
+        icon: User,
     },
     {
         label: "Create Event",

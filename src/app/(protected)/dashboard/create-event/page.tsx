@@ -57,7 +57,7 @@ export default function CreateEventPage() {
     try {
       // For now, backgroundImage is handled as a placeholder in the backend API
       // We send the form data to our Partner Service API
-      const response = await apiPost("/api/v1/partner/events", formData);
+      const response = await apiPost("/api/v1/booking/events", formData);
       console.log("Event created successfully:", response);
       alert("Event published successfully!");
     } catch (error: any) {
@@ -89,7 +89,7 @@ export default function CreateEventPage() {
               <Eye className="mr-2 h-4 w-4" />
               Preview
             </Button>
-            <Button 
+            <Button
               onClick={handlePublish}
               disabled={loading}
               className="rounded-xl bg-violet-600 px-5 text-white hover:bg-violet-700"
@@ -155,7 +155,7 @@ export default function CreateEventPage() {
                 <label className="text-sm font-medium text-slate-700">
                   Category <span className="text-rose-500">*</span>
                 </label>
-                <select 
+                <select
                   name="category"
                   value={formData.category}
                   onChange={handleInputChange}
@@ -216,12 +216,12 @@ export default function CreateEventPage() {
                 Start Time <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
-                <Input 
-                  type="time" 
+                <Input
+                  type="time"
                   name="startTime"
                   value={formData.startTime}
                   onChange={handleInputChange}
-                  className="h-10 bg-white pr-10 text-sm" 
+                  className="h-10 bg-white pr-10 text-sm"
                 />
                 <Clock className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               </div>
@@ -231,12 +231,12 @@ export default function CreateEventPage() {
                 End Time
               </label>
               <div className="relative">
-                <Input 
-                  type="time" 
+                <Input
+                  type="time"
                   name="endTime"
                   value={formData.endTime}
                   onChange={handleInputChange}
-                  className="h-10 bg-white pr-10 text-sm" 
+                  className="h-10 bg-white pr-10 text-sm"
                 />
                 <Clock className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               </div>
@@ -275,12 +275,12 @@ export default function CreateEventPage() {
               Ticket Sales Close
             </label>
             <div className="relative">
-              <Input 
-                type="datetime-local" 
+              <Input
+                type="datetime-local"
                 name="ticketSalesClose"
                 value={formData.ticketSalesClose}
                 onChange={handleInputChange}
-                className="h-10 bg-white pr-10 text-sm" 
+                className="h-10 bg-white pr-10 text-sm"
               />
             </div>
           </div>
@@ -315,22 +315,22 @@ export default function CreateEventPage() {
                     <label className="text-sm font-medium text-slate-700">
                       Price ($)
                     </label>
-                    <Input 
+                    <Input
                       value={ticket.price}
                       onChange={(e) => handleTicketChange(index, "price", e.target.value)}
-                      placeholder="50" 
-                      className="h-10 bg-white" 
+                      placeholder="50"
+                      className="h-10 bg-white"
                     />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-slate-700">
                       Quantity
                     </label>
-                    <Input 
+                    <Input
                       value={ticket.quantity}
                       onChange={(e) => handleTicketChange(index, "quantity", e.target.value)}
-                      placeholder="100" 
-                      className="h-10 bg-white" 
+                      placeholder="100"
+                      className="h-10 bg-white"
                     />
                   </div>
                 </div>
