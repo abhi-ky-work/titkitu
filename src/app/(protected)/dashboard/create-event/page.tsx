@@ -57,7 +57,7 @@ export default function CreateEventPage() {
     try {
       // For now, backgroundImage is handled as a placeholder in the backend API
       // We send the form data to our Partner Service API
-      const response = await apiPost("/api/v1/booking/createEvent", formData);
+      const response = await apiPost("/api/v1/partner/events", formData);
       console.log("Event created successfully:", response);
       alert("Event published successfully!");
     } catch (error: any) {
