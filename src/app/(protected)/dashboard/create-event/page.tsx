@@ -11,7 +11,9 @@ import {
   PlusCircle,
   UploadCloud,
   Loader2,
+  Trash2,
 } from "lucide-react";
+import { AddTicketTypeModal } from "@/components/modals/AddTicketTypeModal";
 
 export default function CreateEventPage() {
   const [loading, setLoading] = useState(false);
@@ -28,27 +30,33 @@ export default function CreateEventPage() {
     noteToAttendees: "Please bring your ID and a printed copy of your ticket.",
     termsConditions: "No refunds after purchase. Event will happen rain or shine.",
     refundPolicy: "Full refund if event is cancelled due to government restrictions.",
-    ticketTypes: [
-      { name: "General Admission", price: "45.00", quantity: "500" },
-      { name: "VIP Experience", price: "120.00", quantity: "50" }
-    ]
+    ticketTypes: [] as Array<{
+      categoryCode: string;
+      categoryName: string;
+      name: string;
+      price: string;
+      quantity: string;
+    }>
   });
+
+  const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleTicketChange = (index: number, field: string, value: string) => {
-    const updatedTicketTypes = [...formData.ticketTypes];
-    updatedTicketTypes[index] = { ...updatedTicketTypes[index], [field]: value };
-    setFormData(prev => ({ ...prev, ticketTypes: updatedTicketTypes }));
-  };
-
-  const addTicketType = () => {
+  const removeTicketType = (index: number) => {
     setFormData(prev => ({
       ...prev,
-      ticketTypes: [...prev.ticketTypes, { name: "", price: "", quantity: "" }]
+      ticketTypes: prev.ticketTypes.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleAddTicket = (ticket: { categoryCode: string; name: string; price: string; quantity: string; categoryName: string }) => {
+    setFormData(prev => ({
+      ...prev,
+      ticketTypes: [...prev.ticketTypes, ticket]
     }));
   };
 
@@ -296,57 +304,62 @@ export default function CreateEventPage() {
           </h2>
 
           <div className="space-y-6">
-            {formData.ticketTypes.map((ticket, index) => (
-              <div key={index} className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50/50 p-4">
-                <p className="text-sm font-medium text-slate-800">Ticket Type {index + 1}</p>
-                <div className="grid gap-4 md:grid-cols-3">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-700">
-                      Ticket Name
-                    </label>
-                    <Input
-                      value={ticket.name}
-                      onChange={(e) => handleTicketChange(index, "name", e.target.value)}
-                      placeholder="General Admission"
-                      className="h-10 bg-white"
-                    />
+            {formData.ticketTypes.length === 0 ? (
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center text-sm text-slate-500">
+                No ticket types added yet. Add your first ticket type below.
+              </div>
+            ) : (
+              formData.ticketTypes.map((ticket, index) => (
+                <div key={index} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-4 shadow-xs">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="inline-flex rounded-md bg-violet-100 px-2 py-1 text-xs font-semibold text-violet-700">
+                        {ticket.categoryCode}
+                      </span>
+                      <p className="text-sm font-semibold text-slate-900">{ticket.name}</p>
+                    </div>
+                    <p className="mt-1 text-xs text-slate-500">
+                      Category: {ticket.categoryName}
+                    </p>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-700">
-                      Price ($)
-                    </label>
-                    <Input
-                      value={ticket.price}
-                      onChange={(e) => handleTicketChange(index, "price", e.target.value)}
-                      placeholder="50"
-                      className="h-10 bg-white"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-700">
-                      Quantity
-                    </label>
-                    <Input
-                      value={ticket.quantity}
-                      onChange={(e) => handleTicketChange(index, "quantity", e.target.value)}
-                      placeholder="100"
-                      className="h-10 bg-white"
-                    />
+                  <div className="flex items-center gap-6">
+                    <div className="text-right">
+                      <p className="text-xs text-slate-500">Price</p>
+                      <p className="text-sm font-semibold text-slate-900">${ticket.price}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-slate-500">Quantity</p>
+                      <p className="text-sm font-semibold text-slate-900">{ticket.quantity}</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeTicketType(index)}
+                      className="ml-2 rounded-lg p-2 text-rose-500 hover:bg-rose-50"
+                      title="Remove Ticket"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
 
           <button
             type="button"
-            onClick={addTicketType}
+            onClick={() => setIsTicketModalOpen(true)}
             className="mt-4 flex w-full items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50 py-3 text-sm font-medium text-slate-600 hover:border-slate-400 hover:bg-slate-100"
           >
             <PlusCircle className="mr-2 h-4 w-4" />
             Add Another Ticket Type
           </button>
         </section>
+
+        <AddTicketTypeModal
+          isOpen={isTicketModalOpen}
+          onClose={() => setIsTicketModalOpen(false)}
+          onAddTicket={handleAddTicket}
+        />
 
         {/* Additional Information */}
         <section className="mb-10 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
