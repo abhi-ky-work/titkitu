@@ -84,7 +84,7 @@ export async function authenticatedFetch(
  * Helper function for GET requests
  */
 export async function apiGet<T = any>(endpoint: string, options: RequestInit = {}): Promise<T | null> {
-  const response = await authenticatedFetch(endpoint, {
+  const response = await authenticatedFetch( process.env.NEXT_PUBLIC_BACKEND_API_URL + endpoint, {
     ...options,
     method: 'GET',
   });
