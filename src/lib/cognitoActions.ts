@@ -69,6 +69,23 @@ export async function getSessionTokens(): Promise<{ idToken?: string; accessToke
   }
 }
 
+export async function logTokenDetails(): Promise<void> {
+  try {
+    const session = await amplifyFetchAuthSession();
+    console.group('🔐 Cognito Auth Token Details');
+    console.log('ID Token Payload:', session.tokens?.idToken?.payload);
+    console.log('Access Token Payload:', session.tokens?.accessToken?.payload);
+    
+    const idGroups = session.tokens?.idToken?.payload?.['cognito:groups'];
+    const accessGroups = session.tokens?.accessToken?.payload?.['cognito:groups'];
+    console.log('Groups (ID Token):', idGroups || 'None');
+    console.log('Groups (Access Token):', accessGroups || 'None');
+    console.groupEnd();
+  } catch (err) {
+    console.error('Failed to fetch auth session for logging', err);
+  }
+}
+
 export async function forgotPassword(params: { email: string }): Promise<void> {
   await amplifyResetPassword({ username: params.email });
 }

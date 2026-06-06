@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { signIn, getCurrentUser } from "@/lib/cognitoActions";
+import { signIn, getCurrentUser, logTokenDetails } from "@/lib/cognitoActions";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/lib/authStore";
 
@@ -43,6 +43,9 @@ export default function PartnerLoginPage() {
       const result = await signIn({ email, password });
       console.log("result", result);
       if (result.isSignedIn) {
+        // Log token details to console for debugging
+        await logTokenDetails();
+        
         // Update global auth store so Header and other components react immediately
         setUser({ username: email });
         router.push("/dashboard");
