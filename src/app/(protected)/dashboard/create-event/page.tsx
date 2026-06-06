@@ -64,8 +64,18 @@ export default function CreateEventPage() {
     setLoading(true);
     try {
       // For now, backgroundImage is handled as a placeholder in the backend API
+      // We parse ticket string values to numbers
+      const payload = {
+        ...formData,
+        ticketTypes: formData.ticketTypes.map(t => ({
+          ...t,
+          price: parseFloat(t.price),
+          quantity: parseInt(t.quantity, 10),
+        }))
+      };
+
       // We send the form data to our Partner Service API
-      const response = await apiPost("/api/v1/partner/events", formData);
+      const response = await apiPost("/api/v1/partner/events", payload);
       console.log("Event created successfully:", response);
       alert("Event published successfully!");
     } catch (error: any) {
