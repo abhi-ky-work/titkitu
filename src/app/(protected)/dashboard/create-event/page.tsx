@@ -12,9 +12,11 @@ import {
   UploadCloud,
   Loader2,
   Trash2,
+  CheckCircle2,
 } from "lucide-react";
 import { AddTicketTypeModal } from "@/components/modals/AddTicketTypeModal";
 import { AddAddressModal } from "@/components/modals/AddAddressModal";
+import { PreviewEventModal } from "@/components/modals/PreviewEventModal";
 
 interface PartnerAddress {
   id: string;
@@ -30,9 +32,14 @@ interface PartnerAddress {
 
 export default function CreateEventPage() {
   const [loading, setLoading] = useState(false);
+  const [savedEventId, setSavedEventId] = useState<string | null>(null);
+  const [eventStatus, setEventStatus] = useState<number | null>(null); // 0: DRAFT, 1: PUBLISHED
+  const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
+  const [eventCategories, setEventCategories] = useState<{ code: string; name: string }[]>([]);
+
   const [formData, setFormData] = useState({
     name: "Summer Music Festival 2024",
-    category: "music",
+    category: "",
     description: "Join us for an unforgettable night of live music and entertainment under the stars.",
     eventDate: "2024-07-15",
     startTime: "18:00",
@@ -84,6 +91,17 @@ export default function CreateEventPage() {
     return [];
   };
 
+  const fetchEventCategories = async () => {
+    try {
+      const data = await apiGet<{ code: string; name: string }[]>("/api/v1/partner/event-categories");
+      if (data) {
+        setEventCategories(data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch event categories:", error);
+    }
+  };
+
   const handleAddressAdded = async (newAddressId?: string) => {
     const updatedAddresses = await fetchAddresses();
     if (newAddressId) {
@@ -109,6 +127,7 @@ export default function CreateEventPage() {
 
   useEffect(() => {
     fetchAddresses();
+    fetchEventCategories();
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -155,11 +174,9 @@ export default function CreateEventPage() {
     }));
   };
 
-  const handlePublish = async () => {
+  const handleSaveDraft = async () => {
     setLoading(true);
     try {
-      // For now, backgroundImage is handled as a placeholder in the backend API
-      // We parse ticket string values to numbers
       const payload = {
         ...formData,
         ticketTypes: formData.ticketTypes.map(t => ({
@@ -169,13 +186,16 @@ export default function CreateEventPage() {
         }))
       };
 
-      // We send the form data to our Partner Service API
-      const response = await apiPost("/api/v1/partner/events", payload);
-      console.log("Event created successfully:", response);
-      alert("Event published successfully!");
+      const response = await apiPost<{ id: string; eventStatus: number }>("/api/v1/partner/events", payload);
+      console.log("Event draft saved successfully:", response);
+      if (response && response.id) {
+        setSavedEventId(response.id);
+        setEventStatus(response.eventStatus);
+        alert("Event draft saved successfully!");
+      }
     } catch (error: any) {
-      console.error("Failed to publish event:", error);
-      alert(error.message || "Failed to publish event. Please try again.");
+      console.error("Failed to save draft event:", error);
+      alert(error.message || "Failed to save draft event. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -197,23 +217,43 @@ export default function CreateEventPage() {
           <div className="flex items-center gap-3">
             <Button
               variant="outline"
+              disabled={!savedEventId}
+              onClick={() => setIsPreviewModalOpen(true)}
               className="rounded-xl border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-100"
             >
               <Eye className="mr-2 h-4 w-4" />
               Preview
             </Button>
-            <Button
-              onClick={handlePublish}
-              disabled={loading}
-              className="rounded-xl bg-violet-600 px-5 text-white hover:bg-violet-700"
-            >
-              {loading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <PlusCircle className="mr-2 h-4 w-4" />
-              )}
-              {loading ? "Publishing..." : "Publish Event"}
-            </Button>
+            {savedEventId === null ? (
+              <Button
+                onClick={handleSaveDraft}
+                disabled={loading}
+                className="rounded-xl bg-violet-600 px-5 text-white hover:bg-violet-700"
+              >
+                {loading ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                )}
+                {loading ? "Saving..." : "Save Draft"}
+              </Button>
+            ) : eventStatus === 0 ? (
+              <Button
+                onClick={() => setIsPreviewModalOpen(true)}
+                className="rounded-xl bg-violet-600 px-5 text-white hover:bg-violet-700"
+              >
+                <Eye className="mr-2 h-4 w-4" />
+                Preview
+              </Button>
+            ) : (
+              <Button
+                disabled
+                className="rounded-xl bg-emerald-600 px-5 text-white"
+              >
+                <CheckCircle2 className="mr-2 h-4 w-4" />
+                Published
+              </Button>
+            )}
           </div>
         </header>
 
@@ -275,10 +315,11 @@ export default function CreateEventPage() {
                   className="h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-800 shadow-xs outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100"
                 >
                   <option value="">Select category</option>
-                  <option value="music">Music</option>
-                  <option value="sports">Sports</option>
-                  <option value="theatre">Theatre</option>
-                  <option value="comedy">Comedy</option>
+                  {eventCategories.map((cat) => (
+                    <option key={cat.code} value={cat.code}>
+                      {cat.name}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -527,6 +568,14 @@ export default function CreateEventPage() {
           isOpen={isAddressModalOpen}
           onClose={() => setIsAddressModalOpen(false)}
           onAddressAdded={handleAddressAdded}
+        />
+
+        <PreviewEventModal
+          isOpen={isPreviewModalOpen}
+          onClose={() => setIsPreviewModalOpen(false)}
+          eventId={savedEventId || ""}
+          eventData={formData}
+          onPublishSuccess={() => setEventStatus(1)}
         />
 
         {/* Additional Information */}
