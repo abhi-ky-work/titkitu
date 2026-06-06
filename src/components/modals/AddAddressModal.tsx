@@ -8,7 +8,7 @@ import { Loader2, Search, MapPin } from "lucide-react";
 interface AddAddressModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddressAdded: () => void;
+  onAddressAdded: (newAddressId?: string) => void;
 }
 
 interface Suggestion {
@@ -53,7 +53,7 @@ export function AddAddressModal({ isOpen, onClose, onAddressAdded }: AddAddressM
       }
       setFetchingSuggestions(true);
       try {
-        const response = await apiGet<Suggestion[]>(`/api/v1/partner/addresses/autocomplete?text=${encodeURIComponent(searchQuery)}`);
+        const response = await apiGet<Suggestion[]>(`/api/v1/partner/event-venues/autocomplete?text=${encodeURIComponent(searchQuery)}`);
         if (response) {
           setSuggestions(response);
         }
@@ -76,7 +76,7 @@ export function AddAddressModal({ isOpen, onClose, onAddressAdded }: AddAddressM
     setSuggestions([]);
     setLoading(true);
     try {
-      const place = await apiGet<any>(`/api/v1/partner/addresses/place?placeId=${placeId}`);
+      const place = await apiGet<any>(`/api/v1/partner/event-venues/place?placeId=${placeId}`);
       if (place) {
         const addrParts = [];
         if (place.AddressNumber) addrParts.push(place.AddressNumber);
@@ -101,11 +101,11 @@ export function AddAddressModal({ isOpen, onClose, onAddressAdded }: AddAddressM
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!addressLine1 || !city || !stateName || !zipCode) return;
+    if (!customAddressName || !addressLine1 || !city || !stateName || !zipCode) return;
 
     setLoading(true);
     try {
-      await apiPost("/api/v1/partner/addresses", {
+      const response = await apiPost<any>("/api/v1/partner/event-venues", {
         customAddressName,
         addressLine1,
         addressLine2,
@@ -115,7 +115,7 @@ export function AddAddressModal({ isOpen, onClose, onAddressAdded }: AddAddressM
         latitude: latitude !== "" ? latitude : undefined,
         longitude: longitude !== "" ? longitude : undefined,
       });
-      onAddressAdded();
+      onAddressAdded(response?.id);
       onClose();
     } catch (error) {
       console.error("Failed to save address", error);
@@ -181,14 +181,15 @@ export function AddAddressModal({ isOpen, onClose, onAddressAdded }: AddAddressM
             {/* Manual Form Fields */}
             <div className="grid gap-2">
               <label htmlFor="customName" className="text-sm font-medium text-slate-700">
-                Address Name <span className="text-slate-400 font-normal">(e.g. Headquarters, Branch 1)</span>
+                Address Name <span className="text-rose-500">*</span> <span className="text-slate-400 font-normal">(e.g. Headquarters, Branch 1)</span>
               </label>
               <Input
                 id="customName"
                 value={customAddressName}
                 onChange={(e) => setCustomAddressName(e.target.value)}
-                placeholder="Optional name"
+                placeholder="e.g. My Venue"
                 className="h-10"
+                required
               />
             </div>
 

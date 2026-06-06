@@ -47,7 +47,7 @@ export default function AccountPage() {
   const fetchAddresses = async () => {
     setLoadingAddresses(true);
     try {
-      const data = await apiGet<any[]>("/api/v1/partner/addresses");
+      const data = await apiGet<any[]>("/api/v1/partner/event-venues");
       if (data) setAddresses(data);
     } catch (error) {
       console.error("Failed to fetch addresses", error);

@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { apiPost } from "@/lib/apiClient";
+import { apiPost, apiGet } from "@/lib/apiClient";
 import {
   CalendarDays,
   Clock,
@@ -14,6 +14,19 @@ import {
   Trash2,
 } from "lucide-react";
 import { AddTicketTypeModal } from "@/components/modals/AddTicketTypeModal";
+import { AddAddressModal } from "@/components/modals/AddAddressModal";
+
+interface PartnerAddress {
+  id: string;
+  customAddressName: string;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  latitude?: number;
+  longitude?: number;
+}
 
 export default function CreateEventPage() {
   const [loading, setLoading] = useState(false);
@@ -30,20 +43,102 @@ export default function CreateEventPage() {
     noteToAttendees: "Please bring your ID and a printed copy of your ticket.",
     termsConditions: "No refunds after purchase. Event will happen rain or shine.",
     refundPolicy: "Full refund if event is cancelled due to government restrictions.",
-    ticketTypes: [] as Array<{
-      categoryCode: string;
-      categoryName: string;
-      name: string;
-      price: string;
-      quantity: string;
-    }>
+    ticketTypes: [
+      {
+        categoryCode: "CUP",
+        categoryName: "Couple",
+        name: "Couple Ticket",
+        price: "9",
+        quantity: "99"
+      },
+      {
+        categoryCode: "GRL",
+        categoryName: "Girls",
+        name: "Girls (Free Shots)",
+        price: "9",
+        quantity: "99"
+      }
+    ],
+    addressId: "",
+    latitude: undefined as number | undefined,
+    longitude: undefined as number | undefined,
+    city: "",
+    state: "",
+    zipCode: ""
   });
 
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+  const [savedAddresses, setSavedAddresses] = useState<PartnerAddress[]>([]);
+
+  const fetchAddresses = async () => {
+    try {
+      const data = await apiGet<PartnerAddress[]>("/api/v1/partner/event-venues");
+      if (data) {
+        setSavedAddresses(data);
+        return data;
+      }
+    } catch (error) {
+      console.error("Failed to fetch addresses:", error);
+    }
+    return [];
+  };
+
+  const handleAddressAdded = async (newAddressId?: string) => {
+    const updatedAddresses = await fetchAddresses();
+    if (newAddressId) {
+      const address = updatedAddresses.find(a => a.id === newAddressId);
+      if (address) {
+        const locationParts = [address.addressLine1];
+        if (address.addressLine2) locationParts.push(address.addressLine2);
+
+        setFormData(prev => ({
+          ...prev,
+          addressId: address.id,
+          venueName: address.customAddressName || address.city,
+          location: locationParts.join(", "),
+          city: address.city,
+          state: address.state,
+          zipCode: address.zipCode,
+          latitude: address.latitude,
+          longitude: address.longitude,
+        }));
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchAddresses();
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleAddressSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedId = e.target.value;
+    if (!selectedId) {
+      setFormData(prev => ({ ...prev, addressId: "" }));
+      return;
+    }
+    const address = savedAddresses.find(a => a.id === selectedId);
+    if (address) {
+      const locationParts = [address.addressLine1];
+      if (address.addressLine2) locationParts.push(address.addressLine2);
+
+      setFormData(prev => ({
+        ...prev,
+        addressId: address.id,
+        venueName: address.customAddressName || address.city,
+        location: locationParts.join(", "),
+        city: address.city,
+        state: address.state,
+        zipCode: address.zipCode,
+        latitude: address.latitude,
+        longitude: address.longitude,
+      }));
+    }
   };
 
   const removeTicketType = (index: number) => {
@@ -261,6 +356,35 @@ export default function CreateEventPage() {
             </div>
           </div>
 
+          <div className="mt-4 flex flex-col sm:flex-row sm:items-end gap-4">
+            <div className="flex-1 space-y-2">
+              <label className="text-sm font-medium text-slate-700">
+                Saved Addresses
+              </label>
+              <select
+                className="h-10 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-800 shadow-xs outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100"
+                value={formData.addressId}
+                onChange={handleAddressSelect}
+              >
+                <option value="">Select a saved address...</option>
+                {savedAddresses.map((addr) => (
+                  <option key={addr.id} value={addr.id}>
+                    {addr.customAddressName} ({addr.city})
+                  </option>
+                ))}
+              </select>
+            </div>
+            <Button
+              variant="outline"
+              type="button"
+              onClick={() => setIsAddressModalOpen(true)}
+              className="h-10 shrink-0"
+            >
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Add Address
+            </Button>
+          </div>
+
           <div className="mt-4 grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <label className="text-sm font-medium text-slate-700">
@@ -270,8 +394,9 @@ export default function CreateEventPage() {
                 name="venueName"
                 value={formData.venueName}
                 onChange={handleInputChange}
-                placeholder="Madison Square Garden"
-                className="h-10 bg-white"
+                placeholder="Auto-populated from address"
+                className="h-10 bg-slate-50 text-slate-500"
+                readOnly
               />
             </div>
             <div className="space-y-2">
@@ -282,9 +407,36 @@ export default function CreateEventPage() {
                 name="location"
                 value={formData.location}
                 onChange={handleInputChange}
-                placeholder="New York, NY"
-                className="h-10 bg-white"
+                placeholder="Auto-populated from address"
+                className="h-10 bg-slate-50 text-slate-500"
+                readOnly
               />
+            </div>
+          </div>
+
+          <div className="mt-4 grid gap-4 md:grid-cols-3">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-700">City</label>
+              <Input value={formData.city} readOnly className="h-10 bg-slate-50 text-slate-500" placeholder="Auto-populated" />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-700">State</label>
+              <Input value={formData.state} readOnly className="h-10 bg-slate-50 text-slate-500" placeholder="Auto-populated" />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-700">Zip Code</label>
+              <Input value={formData.zipCode} readOnly className="h-10 bg-slate-50 text-slate-500" placeholder="Auto-populated" />
+            </div>
+          </div>
+
+          <div className="mt-4 grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-700">Latitude</label>
+              <Input value={formData.latitude ?? ""} readOnly className="h-10 bg-slate-50 text-slate-500" placeholder="Auto-populated" />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-700">Longitude</label>
+              <Input value={formData.longitude ?? ""} readOnly className="h-10 bg-slate-50 text-slate-500" placeholder="Auto-populated" />
             </div>
           </div>
 
@@ -369,6 +521,12 @@ export default function CreateEventPage() {
           isOpen={isTicketModalOpen}
           onClose={() => setIsTicketModalOpen(false)}
           onAddTicket={handleAddTicket}
+        />
+
+        <AddAddressModal
+          isOpen={isAddressModalOpen}
+          onClose={() => setIsAddressModalOpen(false)}
+          onAddressAdded={handleAddressAdded}
         />
 
         {/* Additional Information */}
