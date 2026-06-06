@@ -3,14 +3,20 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { User, Mail, Building, Phone, ArrowLeft, ShieldCheck, CheckCircle2, CreditCard } from "lucide-react";
+import { User, Mail, Building, Phone, ArrowLeft, ShieldCheck, CheckCircle2, CreditCard, MapPin, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { apiPost } from "@/lib/apiClient";
+import { apiPost, apiGet } from "@/lib/apiClient";
+import { AddAddressModal } from "@/components/modals/AddAddressModal";
+import { useEffect } from "react";
 
 export default function AccountPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("profile");
   const [loading, setLoading] = useState(false);
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+  const [addresses, setAddresses] = useState<any[]>([]);
+  const [loadingAddresses, setLoadingAddresses] = useState(false);
+  
   const [formData, setFormData] = useState({
     name: "Partner Admin",
     email: "admin@eventlux.com",
@@ -37,6 +43,24 @@ export default function AccountPage() {
       setLoading(false);
     }
   };
+
+  const fetchAddresses = async () => {
+    setLoadingAddresses(true);
+    try {
+      const data = await apiGet<any[]>("/api/v1/partner/addresses");
+      if (data) setAddresses(data);
+    } catch (error) {
+      console.error("Failed to fetch addresses", error);
+    } finally {
+      setLoadingAddresses(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "addresses") {
+      fetchAddresses();
+    }
+  }, [activeTab]);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -83,6 +107,18 @@ export default function AccountPage() {
                 >
                     <CreditCard className="size-5" />
                     Payment Details
+                </Button>
+                <Button
+                    variant={activeTab === "addresses" ? "secondary" : "ghost"}
+                    className={`w-full justify-start gap-3 rounded-2xl py-5 text-base transition ${
+                        activeTab === "addresses"
+                            ? "bg-violet-50 text-violet-600 hover:bg-violet-100"
+                            : "text-slate-600 hover:bg-slate-100"
+                    }`}
+                    onClick={() => setActiveTab("addresses")}
+                >
+                    <MapPin className="size-5" />
+                    Addresses
                 </Button>
              </nav>
           </div>
@@ -221,7 +257,73 @@ export default function AccountPage() {
                 </div>
              </div>
            )}
+
+           {activeTab === "addresses" && (
+             <div className="animate-in fade-in duration-300 slide-in-from-bottom-2">
+                <div className="flex items-center justify-between mb-8">
+                  <div>
+                    <h1 className="text-3xl font-semibold text-slate-900 mb-1">Addresses</h1>
+                    <p className="text-sm text-slate-500">Manage your business locations and billing addresses</p>
+                  </div>
+                  <Button 
+                    onClick={() => setIsAddressModalOpen(true)}
+                    className="bg-violet-600 hover:bg-violet-700 text-white gap-2 rounded-xl h-10"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Add Address
+                  </Button>
+                </div>
+
+                {loadingAddresses ? (
+                  <div className="flex h-32 items-center justify-center rounded-2xl border border-slate-200 bg-slate-50">
+                    <p className="text-sm text-slate-500">Loading addresses...</p>
+                  </div>
+                ) : addresses.length === 0 ? (
+                  <div className="grid gap-6 rounded-2xl border border-dashed border-slate-200 p-12 text-center text-slate-400">
+                      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-slate-50 mb-2">
+                          <MapPin className="h-8 w-8 text-slate-300" />
+                      </div>
+                      <p>No addresses added yet. Add an address to use for your venues or billing.</p>
+                  </div>
+                ) : (
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {addresses.map((address) => (
+                      <div key={address.id} className="relative rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-violet-200 hover:shadow-md">
+                        <div className="mb-3 flex items-start gap-3">
+                          <div className="mt-0.5 rounded-full bg-violet-50 p-2 text-violet-600">
+                            <MapPin className="h-4 w-4" />
+                          </div>
+                          <div>
+                            <h3 className="font-semibold text-slate-900 line-clamp-1">
+                              {address.customAddressName || address.city}
+                            </h3>
+                            {address.country === "IN" && <span className="text-[10px] font-medium uppercase tracking-wider text-slate-400">India</span>}
+                          </div>
+                        </div>
+                        <div className="text-sm text-slate-600 space-y-1 pl-[44px]">
+                          <p className="line-clamp-1">{address.addressLine1}</p>
+                          {address.addressLine2 && <p className="line-clamp-1">{address.addressLine2}</p>}
+                          <p>{address.city}, {address.state} {address.zipCode}</p>
+                          {(address.latitude && address.longitude) && (
+                            <p className="text-[11px] text-slate-400 pt-1 flex items-center gap-1">
+                              <MapPin className="h-3 w-3" />
+                              {address.latitude}, {address.longitude}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+             </div>
+           )}
         </section>
+
+        <AddAddressModal 
+          isOpen={isAddressModalOpen} 
+          onClose={() => setIsAddressModalOpen(false)} 
+          onAddressAdded={fetchAddresses}
+        />
       </div>
     </div>
   );
