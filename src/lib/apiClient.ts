@@ -98,6 +98,33 @@ export async function apiGet<T = any>(endpoint: string, options: RequestInit = {
 }
 
 /**
+ * Helper function for unauthenticated GET requests
+ */
+export async function publicGet<T = any>(endpoint: string, options: RequestInit = {}): Promise<T | null> {
+  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || '';
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+  const url = endpoint.startsWith('http://') || endpoint.startsWith('https://')
+    ? endpoint
+    : `${baseUrl}/${cleanEndpoint}`;
+
+  const response = await fetch(url, {
+    ...options,
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ message: response.statusText }));
+    throw new Error(error.message || `API request failed: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+/**
  * Helper function for POST requests
  */
 export async function apiPost<T = any>(
