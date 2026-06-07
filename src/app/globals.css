@@ -120,3 +120,205 @@
     @apply bg-background text-foreground;
   }
 }
+/* Scoped global styles for the Stitch Theme */
+
+.stitch-theme {
+  --on-tertiary-fixed: #3f0019;
+  --inverse-surface: #e5e2e3;
+  --inverse-primary: #9800d0;
+  --on-tertiary-container: #ffffff;
+  --on-primary: #520072;
+  --secondary-fixed: #63f7ff;
+  --primary-fixed: #f8d8ff;
+  --on-secondary-container: #006c71;
+  --on-secondary: #003739;
+  --tertiary: #ffb1c3;
+  --on-secondary-fixed: #002021;
+  --on-surface-variant: #d4c0d7;
+  --background: #131314;
+  --surface-bright: #3a393a;
+  --outline-variant: #504254;
+  --on-primary-container: #ffffff;
+  --on-primary-fixed-variant: #74009f;
+  --surface-container-low: #1c1b1c;
+  --tertiary-fixed-dim: #ffb1c3;
+  --surface-tint: #ebb2ff;
+  --surface-container-highest: #353436;
+  --on-error-container: #ffdad6;
+  --primary-container: #bc13fe;
+  --on-secondary-fixed-variant: #004f53;
+  --surface-container: #201f20;
+  --error-container: #93000a;
+  --surface-container-high: #2a2a2b;
+  --on-background: #e5e2e3;
+  --on-surface: #e5e2e3;
+  --error: #ffb4ab;
+  --secondary-container: #00f4fe;
+  --surface-container-lowest: #0e0e0f;
+  --on-tertiary-fixed-variant: #8f0041;
+  --surface-dim: #131314;
+  --primary: #ebb2ff;
+  --on-primary-fixed: #320047;
+  --surface: #131314;
+  --tertiary-container: #e8006e;
+  --outline: #9d8ba0;
+  --on-tertiary: #66002c;
+  --on-error: #690005;
+  --inverse-on-surface: #313031;
+  --primary-fixed-dim: #ebb2ff;
+  --surface-variant: #353436;
+  --tertiary-fixed: #ffd9e0;
+  --secondary: #e6feff;
+  --secondary-fixed-dim: #00dce5;
+
+  /* Overrides for Tailwind classes */
+  --color-primary: #ebb2ff;
+  --color-primary-container: #bc13fe;
+  --color-on-primary-container: #ffffff;
+  --color-secondary-container: #00f4fe;
+  --color-on-secondary-container: #006c71;
+  --color-background: #131314;
+  --color-surface-container: #201f20;
+  --color-surface-container-low: #1c1b1c;
+  --color-surface-container-high: #2a2a2b;
+  --color-surface-container-lowest: #0e0e0f;
+  --color-surface-container-highest: #353436;
+  --color-on-surface: #e5e2e3;
+  --color-on-surface-variant: #d4c0d7;
+  --color-outline-variant: #504254;
+
+  font-family: 'Inter', sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.stitch-theme.dark-theme {
+  --foreground: #e5e2e3;
+  background-color: #0A0A0B;
+  color: #e5e2e3;
+}
+
+.stitch-theme.light-theme {
+  --on-tertiary-fixed: #3f0019;
+  --inverse-surface: #313031;
+  --inverse-primary: #ebb2ff;
+  --on-tertiary-container: #ffffff;
+  --on-primary: #ffffff;
+  --secondary-fixed: #004f53;
+  --primary-fixed: #320047;
+  --on-secondary-container: #002021;
+  --on-secondary: #ffffff;
+  --tertiary: #8f0041;
+  --on-secondary-fixed: #e6feff;
+  --on-surface-variant: #4b5563;
+  --background: #f3f4f6;
+  --surface-bright: #ffffff;
+  --outline-variant: #e5e7eb;
+  --on-primary-container: #ffffff;
+  --on-primary-fixed-variant: #ebb2ff;
+  --surface-container-low: #f9fafb;
+  --tertiary-fixed-dim: #8f0041;
+  --surface-tint: #bc13fe;
+  --surface-container-highest: #e5e7eb;
+  --on-error-container: #ffdad6;
+  --primary-container: #9800d0;
+  --on-secondary-fixed-variant: #00f4fe;
+  --surface-container: #e5e7eb;
+  --error-container: #93000a;
+  --surface-container-high: #ffffff;
+  --on-background: #1f2937;
+  --on-surface: #1f2937;
+  --error: #ffb4ab;
+  --secondary-container: #006c71;
+  --surface-container-lowest: #f9fafb;
+  --on-tertiary-fixed-variant: #ffd9e0;
+  --surface-dim: #f3f4f6;
+  --primary: #9800d0;
+  --on-primary-fixed: #ebb2ff;
+  --surface: #ffffff;
+  --tertiary-container: #ffb1c3;
+  --outline: #9d8ba0;
+  --on-tertiary: #ffffff;
+  --on-error: #ffffff;
+  --inverse-on-surface: #e5e2e3;
+  --primary-fixed-dim: #9800d0;
+  --surface-variant: #e5e7eb;
+  --tertiary-fixed: #ffb1c3;
+  --secondary: #006c71;
+  --secondary-fixed-dim: #00f4fe;
+
+  --color-primary: #9800d0;
+  --color-primary-container: #bc13fe;
+  --color-on-primary-container: #ffffff;
+  --color-secondary-container: #006c71;
+  --color-on-secondary-container: #ffffff;
+  --color-background: #f3f4f6;
+  --color-surface-container: #e5e7eb;
+  --color-surface-container-low: #f9fafb;
+  --color-surface-container-high: #ffffff;
+  --color-surface-container-lowest: #f9fafb;
+  --color-surface-container-highest: #e5e7eb;
+  --color-on-surface: #1f2937;
+  --color-on-surface-variant: #4b5563;
+  --color-outline-variant: #e5e7eb;
+
+  --foreground: #1f2937;
+  background-color: #f3f4f6;
+  color: #1f2937;
+}
+
+.stitch-theme .font-display-lg,
+.stitch-theme .font-headline-md,
+.stitch-theme .font-title-lg {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  display: inline-block;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+}
+
+.material-symbols-outlined.fill {
+  font-variation-settings: 'FILL' 1;
+}
+
+.stitch-theme.dark-theme .glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.stitch-theme.light-theme .glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+.stitch-theme .neon-glow-primary {
+  box-shadow: 0 0 15px rgba(188, 19, 254, 0.4);
+}
+
+.stitch-theme .neon-glow-cyan {
+  box-shadow: 0 0 15px rgba(0, 244, 254, 0.3);
+}
+
+.stitch-theme .custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.stitch-theme .custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.stitch-theme .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #504254;
+  border-radius: 10px;
+}

@@ -1,18 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
-import {
-  Search,
-  MapPin,
-  Calendar,
-  Clock,
-  Ticket,
-  Tag,
-  Loader2,
-  AlertTriangle,
-  ChevronDown,
-} from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { publicGet } from "@/lib/apiClient";
 import { BookTicketsModal } from "@/components/modals/BookTicketsModal";
@@ -53,7 +42,6 @@ const CITY_COORDINATES: Record<string, { lat: number; lon: number }> = {
 };
 
 export default function BrowseEventsPage() {
-  const router = useRouter();
 
   // Search filter states
   const [selectedCity, setSelectedCity] = useState<string>("");
@@ -231,63 +219,36 @@ export default function BrowseEventsPage() {
     if (!event.ticketTypes || event.ticketTypes.length === 0) return 0;
     return Math.min(...event.ticketTypes.map(t => t.price));
   };
-
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Navigation Top Header bar */}
-      <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/80 py-4 shadow-sm backdrop-blur">
-        <div className="mx-auto flex w-11/12 max-w-7xl items-center justify-between">
-          <div className="flex items-center gap-6">
-            <span
-              onClick={() => router.push("/")}
-              className="text-2xl font-bold text-violet-600 cursor-pointer tracking-tight"
-            >
-              TiketIt
-            </span>
-            <span className="hidden md:inline text-sm font-semibold text-slate-400">
-              Event Booking Ecosystem
-            </span>
-          </div>
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              onClick={() => router.push("/dashboard")}
-              className="rounded-xl text-slate-600 hover:bg-slate-100 font-semibold"
-            >
-              Partner Dashboard
-            </Button>
-          </div>
-        </div>
-      </header>
-
+    <div className="min-h-screen bg-background text-on-surface transition-colors duration-300">
       {/* Main layout container */}
       <div className="mx-auto flex w-11/12 max-w-7xl gap-8 py-10 flex-col lg:flex-row">
         {/* Categories Sidebar */}
-        <aside className="w-full lg:max-w-xs rounded-3xl border border-slate-200 bg-white/80 p-6 shadow-sm backdrop-blur shrink-0 self-start">
+        <aside className="w-full lg:max-w-xs rounded-3xl border border-outline-variant/30 bg-surface-container-low/80 p-6 shadow-sm backdrop-blur shrink-0 self-start">
           <div className="mb-6">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
               Browse Filter
             </p>
-            <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-              <Tag className="h-5 w-5 text-violet-500" />
+            <h2 className="text-xl font-bold text-on-surface flex items-center gap-2">
+              <span className="material-symbols-outlined text-[20px] text-primary">tag</span>
               Categories
             </h2>
           </div>
 
-          <nav className="space-y-1.5 max-h-[70vh] overflow-y-auto pr-1">
+          <nav className="space-y-1.5 max-h-[70vh] overflow-y-auto pr-1 custom-scrollbar">
             {/* First item - All Events */}
             <button
               onClick={() => setActiveCategory("")}
-              className={`w-full text-left justify-start gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition flex items-center ${
+              className={`w-full text-left justify-start gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition flex items-center cursor-pointer ${
                 activeCategory === ""
-                  ? "bg-violet-50 text-violet-600"
-                  : "text-slate-600 hover:bg-slate-100"
+                  ? "bg-primary/15 text-primary"
+                  : "text-on-surface-variant hover:bg-surface-container-high"
               }`}
             >
-              <Ticket className="size-4 shrink-0" />
+              <span className="material-symbols-outlined text-[18px]">confirmation_number</span>
               <span>All Events</span>
               {selectedCity && (
-                <span className="ml-auto bg-slate-100 text-slate-500 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                <span className="ml-auto bg-surface-container-highest text-on-surface-variant text-[10px] font-bold px-2 py-0.5 rounded-full">
                   {events.length}
                 </span>
               )}
@@ -296,7 +257,7 @@ export default function BrowseEventsPage() {
             {/* Categories dynamic items */}
             {loadingCategories ? (
               <div className="flex justify-center py-4">
-                <Loader2 className="h-5 w-5 animate-spin text-violet-600" />
+                <Loader2 className="h-5 w-5 animate-spin text-primary" />
               </div>
             ) : (
               categories.map((cat) => {
@@ -306,16 +267,16 @@ export default function BrowseEventsPage() {
                   <button
                     key={cat.code}
                     onClick={() => setActiveCategory(cat.code)}
-                    className={`w-full text-left justify-start gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition flex items-center ${
+                    className={`w-full text-left justify-start gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition flex items-center cursor-pointer ${
                       isActive
-                        ? "bg-violet-50 text-violet-600"
-                        : "text-slate-600 hover:bg-slate-100"
+                        ? "bg-primary/15 text-primary"
+                        : "text-on-surface-variant hover:bg-surface-container-high"
                     }`}
                   >
-                    <div className={`w-1.5 h-1.5 rounded-full ${isActive ? "bg-violet-600" : "bg-slate-300"}`} />
+                    <div className={`w-1.5 h-1.5 rounded-full ${isActive ? "bg-primary" : "bg-outline-variant"}`} />
                     <span className="truncate">{cat.name}</span>
                     {selectedCity && catCount > 0 && (
-                      <span className="ml-auto bg-slate-100 text-slate-500 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                      <span className="ml-auto bg-surface-container-highest text-on-surface-variant text-[10px] font-bold px-2 py-0.5 rounded-full">
                         {catCount}
                       </span>
                     )}
@@ -327,16 +288,18 @@ export default function BrowseEventsPage() {
         </aside>
 
         {/* Main section: Search bar & Grid */}
-        <section className="flex-1 rounded-3xl border border-slate-200 bg-white px-8 py-10 shadow-sm min-h-[60vh]">
+        <section className="flex-1 rounded-3xl border border-outline-variant/30 bg-surface-container px-8 py-10 shadow-sm min-h-[60vh] transition-colors duration-300">
           {/* Search Header Row */}
           <div className="flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center mb-8">
             {/* City Selector */}
             <div className="relative shrink-0 w-full md:w-56">
-              <MapPin className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 size-4 pointer-events-none" />
+              <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px] pointer-events-none">
+                location_on
+              </span>
               <select
                 value={selectedCity}
                 onChange={handleCityChange}
-                className="w-full h-11 pl-10 pr-8 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-semibold text-slate-700 appearance-none focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent cursor-pointer"
+                className="w-full h-11 pl-10 pr-8 bg-surface-container-low border border-outline-variant/50 rounded-2xl text-sm font-semibold text-on-surface appearance-none focus:outline-none focus:ring-1 focus:ring-primary focus:border-transparent cursor-pointer transition-colors"
               >
                 <option value="">Select Location...</option>
                 {Object.keys(CITY_COORDINATES).map((cityName) => (
@@ -345,25 +308,29 @@ export default function BrowseEventsPage() {
                   </option>
                 ))}
               </select>
-              <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 size-4 pointer-events-none" />
+              <span className="material-symbols-outlined absolute right-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px] pointer-events-none">
+                keyboard_arrow_down
+              </span>
             </div>
 
             {/* Search Input with Autocomplete */}
             <div ref={suggestionsRef} className="relative flex-1">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 size-4 pointer-events-none" />
+              <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px] pointer-events-none">
+                search
+              </span>
               <input
                 type="text"
                 placeholder={selectedCity ? `Search events in ${selectedCity}...` : "Please select a location first..."}
                 value={searchQuery}
                 disabled={!selectedCity}
                 onChange={(e) => handleSearchChange(e.target.value)}
-                className="w-full h-11 pl-10 pr-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-medium text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent disabled:opacity-60 disabled:cursor-not-allowed transition"
+                className="w-full h-11 pl-10 pr-4 bg-surface-container-low border border-outline-variant/50 rounded-2xl text-sm font-medium text-on-surface placeholder:text-on-surface-variant/70 focus:outline-none focus:ring-1 focus:ring-primary focus:border-transparent disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
               />
 
               {/* Autocomplete Suggestions Box */}
               {showSuggestions && autocompleteSuggestions.length > 0 && (
-                <div className="absolute left-0 right-0 top-full mt-2 bg-white border border-slate-200 rounded-2xl shadow-lg z-50 overflow-hidden">
-                  <p className="text-[10px] uppercase tracking-wider font-bold text-slate-400 px-4 pt-3 pb-1 border-b border-slate-50">
+                <div className="absolute left-0 right-0 top-full mt-2 bg-surface-container-high border border-outline-variant rounded-2xl shadow-lg z-50 overflow-hidden">
+                  <p className="text-[10px] uppercase tracking-wider font-bold text-on-surface-variant px-4 pt-3 pb-1 border-b border-outline-variant/10">
                     Suggestions
                   </p>
                   <div className="py-1">
@@ -371,7 +338,7 @@ export default function BrowseEventsPage() {
                       <button
                         key={idx}
                         onClick={() => selectSuggestion(suggestion)}
-                        className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-violet-50 hover:text-violet-600 transition font-medium capitalize"
+                        className="w-full text-left px-4 py-2.5 text-sm text-on-surface hover:bg-primary/10 hover:text-primary transition font-medium capitalize cursor-pointer"
                       >
                         {suggestion}
                       </button>
@@ -385,29 +352,29 @@ export default function BrowseEventsPage() {
           {/* Core Content Area */}
           {!selectedCity ? (
             /* Warning / Alert to select location */
-            <div className="flex flex-col items-center justify-center py-16 text-center bg-slate-50/50 border border-slate-150 border-dashed rounded-3xl">
-              <div className="rounded-full bg-violet-50 p-4 text-violet-500 mb-4 animate-bounce">
-                <MapPin className="h-8 w-8" />
+            <div className="flex flex-col items-center justify-center py-16 text-center bg-surface-container-low/50 border border-outline-variant/50 border-dashed rounded-3xl">
+              <div className="rounded-full bg-primary/10 p-4 text-primary mb-4 animate-bounce">
+                <span className="material-symbols-outlined text-[32px]">location_on</span>
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-2">Select a Location</h3>
-              <p className="text-sm text-slate-500 max-w-sm">
+              <h3 className="text-xl font-bold text-[var(--foreground)] mb-2">Select a Location</h3>
+              <p className="text-sm text-on-surface-variant max-w-sm">
                 Enter or select a city location above to discover and browse events.
               </p>
             </div>
           ) : loadingEvents ? (
             /* Loading Spinner */
             <div className="flex flex-col items-center justify-center py-20">
-              <Loader2 className="h-10 w-10 animate-spin text-violet-600 mb-3" />
-              <p className="text-sm text-slate-500 font-medium">Fetching events...</p>
+              <Loader2 className="h-10 w-10 animate-spin text-primary mb-3" />
+              <p className="text-sm text-on-surface-variant font-medium">Fetching events...</p>
             </div>
           ) : filteredEvents.length === 0 ? (
             /* Empty state */
-            <div className="flex flex-col items-center justify-center py-16 text-center bg-slate-50/50 border border-slate-150 border-dashed rounded-3xl">
-              <div className="rounded-full bg-slate-100 p-4 text-slate-400 mb-4">
-                <AlertTriangle className="h-8 w-8" />
+            <div className="flex flex-col items-center justify-center py-16 text-center bg-surface-container-low/50 border border-outline-variant/50 border-dashed rounded-3xl">
+              <div className="rounded-full bg-surface-container-highest p-4 text-on-surface-variant mb-4">
+                <span className="material-symbols-outlined text-[32px]">warning</span>
               </div>
-              <h3 className="text-lg font-bold text-slate-800 mb-1">No Events Found</h3>
-              <p className="text-sm text-slate-500 max-w-xs">
+              <h3 className="text-lg font-bold text-[var(--foreground)] mb-1">No Events Found</h3>
+              <p className="text-sm text-on-surface-variant max-w-xs">
                 No events match your current selection in {selectedCity}. Try selecting a different category or clearing search query.
               </p>
             </div>
@@ -415,10 +382,10 @@ export default function BrowseEventsPage() {
             /* Event Grid */
             <div>
               <div className="mb-6 flex justify-between items-center">
-                <h3 className="font-bold text-slate-800 text-lg">
+                <h3 className="font-bold text-[var(--foreground)] text-lg">
                   {activeCategory ? `Category: ${categories.find(c => c.code === activeCategory)?.name || activeCategory}` : "All Trending Events"}
                 </h3>
-                <span className="text-xs font-semibold text-slate-400">
+                <span className="text-xs font-semibold text-on-surface-variant">
                   Showing {filteredEvents.length} events in {selectedCity}
                 </span>
               </div>
@@ -429,10 +396,10 @@ export default function BrowseEventsPage() {
                   return (
                     <div
                       key={event.id}
-                      className="group flex flex-col bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-md hover:border-violet-300 transition overflow-hidden"
+                      className="group flex flex-col bg-surface-container-high rounded-3xl border border-outline-variant/30 shadow-sm hover:shadow-md hover:border-primary/50 transition-colors duration-300 overflow-hidden"
                     >
                       {/* Image section */}
-                      <div className="relative aspect-video w-full overflow-hidden bg-slate-100">
+                      <div className="relative aspect-video w-full overflow-hidden bg-surface-container">
                         {event.backgroundImage ? (
                           <img
                             src={event.backgroundImage}
@@ -440,13 +407,13 @@ export default function BrowseEventsPage() {
                             className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
                           />
                         ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-violet-100 to-indigo-150 flex items-center justify-center text-violet-400">
-                            <Ticket className="h-12 w-12" />
+                          <div className="w-full h-full bg-gradient-to-br from-primary/10 to-secondary-container/10 flex items-center justify-center text-primary/40">
+                            <span className="material-symbols-outlined text-[48px]">confirmation_number</span>
                           </div>
                         )}
                         {/* Category badge */}
                         <div className="absolute bottom-3 left-3">
-                          <span className="bg-white/95 backdrop-blur-sm text-violet-600 text-[10px] uppercase font-bold px-3 py-1 rounded-full border border-violet-100 shadow-sm tracking-wide">
+                          <span className="bg-surface/80 backdrop-blur-sm text-primary text-[10px] uppercase font-bold px-3 py-1 rounded-full border border-primary/30 shadow-sm tracking-wide">
                             {event.category}
                           </span>
                         </div>
@@ -454,41 +421,41 @@ export default function BrowseEventsPage() {
 
                       {/* Content details section */}
                       <div className="p-5 flex-1 flex flex-col">
-                        <h4 className="font-bold text-slate-900 text-base mb-2 group-hover:text-violet-600 transition line-clamp-1">
+                        <h4 className="font-bold text-on-surface text-base mb-2 group-hover:text-primary transition line-clamp-1">
                           {event.name}
                         </h4>
-                        <p className="text-xs text-slate-500 line-clamp-2 mb-4 leading-relaxed">
+                        <p className="text-xs text-on-surface-variant line-clamp-2 mb-4 leading-relaxed">
                           {event.description || "Join us for an amazing event experience. Book your tickets now!"}
                         </p>
 
-                        <div className="space-y-2 mb-4 text-xs font-semibold text-slate-500">
+                        <div className="space-y-2 mb-4 text-xs font-semibold text-on-surface-variant">
                           <div className="flex items-center gap-2">
-                            <MapPin className="h-3.5 w-3.5 text-violet-500" />
+                            <span className="material-symbols-outlined text-[16px] text-primary">location_on</span>
                             <span className="truncate">{event.venueName}</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Calendar className="h-3.5 w-3.5 text-violet-500" />
+                            <span className="material-symbols-outlined text-[16px] text-primary">calendar_today</span>
                             <span>{formatEventDate(event.eventDate)}</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Clock className="h-3.5 w-3.5 text-violet-500" />
+                            <span className="material-symbols-outlined text-[16px] text-primary">schedule</span>
                             <span>{event.startTime}</span>
                           </div>
                         </div>
 
                         {/* Price and Action Footer */}
-                        <div className="mt-auto pt-4 border-t border-slate-50 flex items-center justify-between">
+                        <div className="mt-auto pt-4 border-t border-outline-variant/10 flex items-center justify-between">
                           <div>
-                            <span className="text-[10px] text-slate-400 font-bold block uppercase tracking-wider">
+                            <span className="text-[10px] text-on-surface-variant font-bold block uppercase tracking-wider">
                               Starts From
                             </span>
-                            <span className="text-lg font-extrabold text-violet-600">
+                            <span className="text-lg font-extrabold text-primary">
                               ${minPrice.toFixed(2)}
                             </span>
                           </div>
                           <Button
                             onClick={() => handleBookClick(event)}
-                            className="bg-violet-600 hover:bg-violet-700 text-white rounded-2xl px-5 py-2.5 font-bold text-xs"
+                            className="bg-primary-container text-on-primary-container hover:scale-105 active:scale-95 transition-transform duration-150 rounded-2xl px-5 py-2.5 font-bold text-xs cursor-pointer"
                           >
                             Book Tickets
                           </Button>

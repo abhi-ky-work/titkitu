@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { publicGet } from "@/lib/apiClient";
 import { BookTicketsModal } from "@/components/modals/BookTicketsModal";
 import { Loader2 } from "lucide-react";
+import { useThemeStore } from "@/lib/themeStore";
 
 interface TicketType {
   id: string;
@@ -49,8 +50,8 @@ const DEFAULT_VIBES = ["Underground", "Luxury", "Rooftop", "Warehouse"];
 export default function BrowseEventsPage2() {
   const router = useRouter();
 
-  // Theme state (default dark mode)
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
+  // Theme state using global store
+  const isDarkMode = useThemeStore((state) => state.isDarkMode);
 
   // Search/Filter states
   const [selectedCity, setSelectedCity] = useState<string>("Bengaluru");
@@ -77,7 +78,7 @@ export default function BrowseEventsPage2() {
   const suggestionsRef = useRef<HTMLDivElement>(null);
   const autocompleteTimeout = useRef<NodeJS.Timeout | null>(null);
 
-  // Manage dark mode classes on HTML/body for consistent modal rendering
+  // Enforce dark mode class on HTML body for modal rendering consistency
   useEffect(() => {
     fetchCategories();
 
@@ -90,19 +91,9 @@ export default function BrowseEventsPage2() {
     document.addEventListener("mousedown", handleOutsideClick);
 
     return () => {
-      document.documentElement.classList.remove("dark");
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, []);
-
-  // Update HTML class list dynamically when user toggles dark mode
-  useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [isDarkMode]);
 
   // Fetch events when city coordinates or search query changes
   useEffect(() => {
@@ -269,286 +260,7 @@ export default function BrowseEventsPage2() {
     <div className={`stitch-theme min-h-screen relative font-body-md text-body-md transition-colors duration-300 ${
       isDarkMode ? "dark-theme" : "light-theme"
     }`}>
-      <style dangerouslySetInnerHTML={{ __html: `
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
-
-        .stitch-theme {
-          font-family: 'Inter', sans-serif;
-          transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        .stitch-theme.dark-theme {
-          --on-tertiary-fixed: #3f0019;
-          --inverse-surface: #e5e2e3;
-          --inverse-primary: #9800d0;
-          --on-tertiary-container: #ffffff;
-          --on-primary: #520072;
-          --secondary-fixed: #63f7ff;
-          --primary-fixed: #f8d8ff;
-          --on-secondary-container: #006c71;
-          --on-secondary: #003739;
-          --tertiary: #ffb1c3;
-          --on-secondary-fixed: #002021;
-          --on-surface-variant: #d4c0d7;
-          --background: #131314;
-          --surface-bright: #3a393a;
-          --outline-variant: #504254;
-          --on-primary-container: #ffffff;
-          --on-primary-fixed-variant: #74009f;
-          --surface-container-low: #1c1b1c;
-          --tertiary-fixed-dim: #ffb1c3;
-          --surface-tint: #ebb2ff;
-          --surface-container-highest: #353436;
-          --on-error-container: #ffdad6;
-          --primary-container: #bc13fe;
-          --on-secondary-fixed-variant: #004f53;
-          --surface-container: #201f20;
-          --error-container: #93000a;
-          --surface-container-high: #2a2a2b;
-          --on-background: #e5e2e3;
-          --on-surface: #e5e2e3;
-          --error: #ffb4ab;
-          --secondary-container: #00f4fe;
-          --surface-container-lowest: #0e0e0f;
-          --on-tertiary-fixed-variant: #8f0041;
-          --surface-dim: #131314;
-          --primary: #ebb2ff;
-          --on-primary-fixed: #320047;
-          --surface: #131314;
-          --tertiary-container: #e8006e;
-          --outline: #9d8ba0;
-          --on-tertiary: #66002c;
-          --on-error: #690005;
-          --inverse-on-surface: #313031;
-          --primary-fixed-dim: #ebb2ff;
-          --surface-variant: #353436;
-          --tertiary-fixed: #ffd9e0;
-          --secondary: #e6feff;
-          --secondary-fixed-dim: #00dce5;
-
-          /* Overrides for Tailwind classes */
-          --color-primary: #ebb2ff;
-          --color-primary-container: #bc13fe;
-          --color-on-primary-container: #ffffff;
-          --color-secondary-container: #00f4fe;
-          --color-on-secondary-container: #006c71;
-          --color-background: #131314;
-          --color-surface-container: #201f20;
-          --color-surface-container-low: #1c1b1c;
-          --color-surface-container-high: #2a2a2b;
-          --color-surface-container-lowest: #0e0e0f;
-          --color-surface-container-highest: #353436;
-          --color-on-surface: #e5e2e3;
-          --color-on-surface-variant: #d4c0d7;
-          --color-outline-variant: #504254;
-
-          --foreground: #e5e2e3;
-          background-color: #0A0A0B;
-          color: #e5e2e3;
-        }
-
-        .stitch-theme.light-theme {
-          --on-tertiary-fixed: #3f0019;
-          --inverse-surface: #313031;
-          --inverse-primary: #ebb2ff;
-          --on-tertiary-container: #ffffff;
-          --on-primary: #ffffff;
-          --secondary-fixed: #004f53;
-          --primary-fixed: #320047;
-          --on-secondary-container: #002021;
-          --on-secondary: #ffffff;
-          --tertiary: #8f0041;
-          --on-secondary-fixed: #e6feff;
-          --on-surface-variant: #4b5563;
-          --background: #f3f4f6;
-          --surface-bright: #ffffff;
-          --outline-variant: #e5e7eb;
-          --on-primary-container: #ffffff;
-          --on-primary-fixed-variant: #ebb2ff;
-          --surface-container-low: #f9fafb;
-          --tertiary-fixed-dim: #8f0041;
-          --surface-tint: #bc13fe;
-          --surface-container-highest: #e5e7eb;
-          --on-error-container: #ffdad6;
-          --primary-container: #9800d0;
-          --on-secondary-fixed-variant: #00f4fe;
-          --surface-container: #e5e7eb;
-          --error-container: #93000a;
-          --surface-container-high: #ffffff;
-          --on-background: #1f2937;
-          --on-surface: #1f2937;
-          --error: #ffb4ab;
-          --secondary-container: #006c71;
-          --surface-container-lowest: #f9fafb;
-          --on-tertiary-fixed-variant: #ffd9e0;
-          --surface-dim: #f3f4f6;
-          --primary: #9800d0;
-          --on-primary-fixed: #ebb2ff;
-          --surface: #ffffff;
-          --tertiary-container: #ffb1c3;
-          --outline: #9d8ba0;
-          --on-tertiary: #ffffff;
-          --on-error: #ffffff;
-          --inverse-on-surface: #e5e2e3;
-          --primary-fixed-dim: #9800d0;
-          --surface-variant: #e5e7eb;
-          --tertiary-fixed: #ffb1c3;
-          --secondary: #006c71;
-          --secondary-fixed-dim: #00f4fe;
-
-          /* Overrides for Tailwind classes */
-          --color-primary: #9800d0;
-          --color-primary-container: #bc13fe;
-          --color-on-primary-container: #ffffff;
-          --color-secondary-container: #006c71;
-          --color-on-secondary-container: #ffffff;
-          --color-background: #f3f4f6;
-          --color-surface-container: #e5e7eb;
-          --color-surface-container-low: #f9fafb;
-          --color-surface-container-high: #ffffff;
-          --color-surface-container-lowest: #f9fafb;
-          --color-surface-container-highest: #e5e7eb;
-          --color-on-surface: #1f2937;
-          --color-on-surface-variant: #4b5563;
-          --color-outline-variant: #e5e7eb;
-
-          --foreground: #1f2937;
-          background-color: #f3f4f6;
-          color: #1f2937;
-        }
-
-        .stitch-theme .font-display-lg,
-        .stitch-theme .font-headline-md,
-        .stitch-theme .font-title-lg {
-          font-family: 'Montserrat', sans-serif;
-        }
-
-        .stitch-theme .material-symbols-outlined {
-          font-family: 'Material Symbols Outlined';
-          font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-          display: inline-block;
-          line-height: 1;
-          letter-spacing: normal;
-          text-transform: none;
-          white-space: nowrap;
-          word-wrap: normal;
-          direction: ltr;
-          -webkit-font-smoothing: antialiased;
-        }
-
-        .stitch-theme .material-symbols-outlined.fill {
-          font-variation-settings: 'FILL' 1;
-        }
-
-        .stitch-theme.dark-theme .glass-card {
-          background: rgba(255, 255, 255, 0.03);
-          backdrop-filter: blur(20px);
-          border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .stitch-theme.light-theme .glass-card {
-          background: rgba(255, 255, 255, 0.7);
-          backdrop-filter: blur(20px);
-          border: 1px solid rgba(0, 0, 0, 0.08);
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-        }
-
-        .stitch-theme .neon-glow-primary {
-          box-shadow: 0 0 15px rgba(188, 19, 254, 0.4);
-        }
-
-        .stitch-theme .neon-glow-cyan {
-          box-shadow: 0 0 15px rgba(0, 244, 254, 0.3);
-        }
-
-        .stitch-theme .custom-scrollbar::-webkit-scrollbar {
-          width: 4px;
-        }
-
-        .stitch-theme .custom-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
-        }
-
-        .stitch-theme .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #504254;
-          border-radius: 10px;
-        }
-      `}} />
-
-      {/* Top Navigation Bar */}
-      <header className="bg-background/80 backdrop-blur-xl sticky top-0 z-50 border-b border-outline-variant/10 shadow-[0_0_20px_rgba(188,19,254,0.15)]">
-        <nav className="flex justify-between items-center w-full px-5 py-4 max-w-7xl mx-auto">
-          <div className="flex items-center gap-8">
-            <span 
-              onClick={() => router.push("/dashboard")} 
-              className="font-display-lg text-2xl md:text-3xl tracking-tighter text-primary cursor-pointer font-extrabold"
-            >
-              TiketIt
-            </span>
-            <div className="hidden md:flex gap-6 items-center">
-              <span onClick={() => router.push("/browseEvents")} className="text-on-surface-variant hover:text-primary transition-colors cursor-pointer text-sm font-medium">Standard Browse</span>
-              <span className="text-primary border-b-2 border-primary pb-1 text-sm font-semibold cursor-default">Stitch Grid Theme</span>
-              <span className="text-on-surface-variant hover:text-primary transition-colors cursor-pointer text-sm font-medium">VIP Tables</span>
-              <span className="text-on-surface-variant hover:text-primary transition-colors cursor-pointer text-sm font-medium">My Tickets</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4">
-            {/* Search Input with Autocomplete */}
-            <div ref={suggestionsRef} className="relative hidden sm:block">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-              <input
-                className="bg-surface-container-high border-none rounded-full pl-10 pr-4 py-2 text-sm text-[var(--foreground)] focus:ring-1 focus:ring-secondary-container w-64 transition-all"
-                placeholder="Search clubs or events..."
-                type="text"
-                value={searchQuery}
-                onChange={(e) => handleSearchChange(e.target.value)}
-                onFocus={() => {
-                  if (autocompleteSuggestions.length > 0) setShowSuggestions(true);
-                }}
-              />
-              {showSuggestions && autocompleteSuggestions.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-surface-container-high border border-outline-variant rounded-xl overflow-hidden shadow-2xl z-50">
-                  {autocompleteSuggestions.map((suggestion, idx) => (
-                    <div
-                      key={idx}
-                      onClick={() => selectSuggestion(suggestion)}
-                      className="px-4 py-2 text-sm text-[var(--foreground)] hover:bg-primary-container hover:text-on-primary-container cursor-pointer transition-colors"
-                    >
-                      {suggestion}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Dark/Light Theme Switcher Button */}
-            <button
-              onClick={() => setIsDarkMode(prev => !prev)}
-              className="w-10 h-10 rounded-full glass-card flex items-center justify-center text-primary hover:scale-105 active:scale-95 transition-all cursor-pointer"
-              title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-            >
-              <span className="material-symbols-outlined text-[20px]">
-                {isDarkMode ? "light_mode" : "dark_mode"}
-              </span>
-            </button>
-
-            <button 
-              onClick={() => router.push("/dashboard/create-event")}
-              className="hidden lg:block px-6 py-2 rounded-full bg-primary-container text-on-primary-container text-xs font-semibold scale-95 active:scale-90 transition-transform neon-glow-primary cursor-pointer"
-            >
-              Join the Club
-            </button>
-            <button 
-              onClick={() => router.push("/dashboard")}
-              className="text-on-surface-variant hover:text-primary transition-colors text-xs font-semibold cursor-pointer"
-            >
-              Dashboard
-            </button>
-          </div>
-        </nav>
-      </header>
+      {/* Header rendered globally */}
 
       {/* Main Container */}
       <main className="max-w-7xl mx-auto px-5 py-10 flex flex-col md:flex-row gap-8">
@@ -799,30 +511,7 @@ export default function BrowseEventsPage2() {
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="bg-surface-container-lowest w-full py-10 mt-16 border-t border-outline-variant">
-        <div className="flex flex-col md:flex-row justify-between items-center px-5 max-w-7xl mx-auto gap-6">
-          <div className="flex flex-col items-center md:items-start gap-2">
-            <span className="font-display-lg text-xl font-extrabold text-primary">TiketIt</span>
-            <p className="text-on-surface-variant text-xs">TiketIt 2026 • Instant Access to the Best Nightlife.</p>
-          </div>
-          <div className="flex flex-wrap justify-center gap-6">
-            <span className="text-on-surface-variant hover:text-secondary-container transition-colors text-xs font-medium cursor-pointer">About Us</span>
-            <span className="text-on-surface-variant hover:text-secondary-container transition-colors text-xs font-medium cursor-pointer">Contact Support</span>
-            <span className="text-on-surface-variant hover:text-secondary-container transition-colors text-xs font-medium cursor-pointer">Terms of Service</span>
-            <span className="text-on-surface-variant hover:text-secondary-container transition-colors text-xs font-medium cursor-pointer">Privacy Policy</span>
-            <span className="text-on-surface-variant hover:text-secondary-container transition-colors text-xs font-medium cursor-pointer">Partner with Us</span>
-          </div>
-          <div className="flex gap-4">
-            <button className="w-10 h-10 rounded-full glass-card flex items-center justify-center text-on-surface-variant hover:text-primary transition-all cursor-pointer">
-              <span className="material-symbols-outlined">share</span>
-            </button>
-            <button className="w-10 h-10 rounded-full glass-card flex items-center justify-center text-on-surface-variant hover:text-primary transition-all cursor-pointer">
-              <span className="material-symbols-outlined">public</span>
-            </button>
-          </div>
-        </div>
-      </footer>
+      {/* Footer rendered globally */}
 
       {/* FAB for Quick Dashboard Access */}
       <button 

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
+import StitchThemeWrapper from "./components/StitchThemeWrapper";
+import StitchHeader from "./components/StitchHeader";
+import StitchFooter from "./components/StitchFooter";
 import ConfigureAmplifyClientside from "./amplify-cognito-config";
 import AuthInitializer from "./AuthInitializer";
 
@@ -18,12 +19,22 @@ export default async function RootLayout({
   // const session = await auth;
   return (
     <html lang="en">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+      </head>
       <body>
         <ConfigureAmplifyClientside />
         <AuthInitializer />
-        <Header />
-        {children}
-        <Footer />
+        <StitchThemeWrapper>
+          <StitchHeader />
+          <div className="flex-grow flex flex-col">
+            {children}
+          </div>
+          <StitchFooter />
+        </StitchThemeWrapper>
       </body>
     </html>
   );
